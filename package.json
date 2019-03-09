@@ -1,14 +1,23 @@
 {
   "dependencies": {
+    "@types/dotenv": "^6.1.0",
+    "@types/express": "^4.16.1",
+    "@types/lodash": "^4.14.122",
+    "@types/url-parse": "^1.4.3",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "googleapis": "^37.2.0",
+    "lodash": "^4.17.11",
     "tslint": "^5.13.1",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "url-parse": "^1.4.4"
   },
   "name": "carabiniere",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "start": "ts-node src/index",
+    "start": "ts-node src/server/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Gianluca Venturini",
