@@ -12,8 +12,13 @@ import {
 import {log} from '../log';
 import {EmailService} from './types';
 
-const SCOPES = ['https://mail.google.com/'];
+const SCOPES = [
+  'https://mail.google.com/',
+  'https://www.googleapis.com/auth/gmail.readonly',
+  'https://www.googleapis.com/auth/gmail.modify',
+];
 const MAX_PAGE_FETCH_ATTEMPTS = 3;
+const MESSAGE_FETCH_WORKERS = 100;
 
 export class GmailEmailService implements EmailService {
   public OAUTH_CALLBACK = GOOGLE_OAUTH_CALLBACK;
@@ -55,6 +60,33 @@ export class GmailEmailService implements EmailService {
   listAllEmails(asyncQueue: AsyncQueue<gmail_v1.Schema$Message>) {
     log('Start listing emails');
     const gmail = google.gmail({version: 'v1', auth: this.oauthClient});
+    // Queue used for fetching the next message
+    const messageQueue = queue<gmail_v1.Schema$Message>(
+      async (messageMetadata, done) => {
+        let attempts = 0;
+        while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
+          try {
+            const message = await this.fetchEmail(gmail, messageMetadata.id);
+            log(`Successfully fetched message ${message.id}`);
+            asyncQueue.push(message);
+            done();
+            break;
+          } catch (err) {
+            log(
+              `Error in fetching message ${messageMetadata.id} ${err}`,
+              MessageLevel.WARNING,
+            );
+            attempts += 1;
+          }
+        }
+        if (attempts >= MAX_PAGE_FETCH_ATTEMPTS) {
+          throw Error(
+            `Max attempts exceeded for message ${messageMetadata.id}`,
+          );
+        }
+      },
+      MESSAGE_FETCH_WORKERS,
+    );
 
     const listEmailState: {
       allPagesExplored: boolean;
@@ -81,7 +113,7 @@ export class GmailEmailService implements EmailService {
         let attempts = 0;
         while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
           try {
-            const data = await this.listEmailsInPage(
+            const data = await this.listEmailIdsInPage(
               gmail,
               listEmailState.pageToken,
             );
@@ -91,9 +123,10 @@ export class GmailEmailService implements EmailService {
                 listEmailState.pageToken
               }`,
             );
-            asyncQueue.push(messages);
+            messageQueue.push(messages);
             if (nextPageToken === undefined) {
               log('All pages explored');
+              process.exit(0);
               listEmailState.allPagesExplored = true;
             } else {
               listEmailState.pageToken = nextPageToken;
@@ -116,12 +149,22 @@ export class GmailEmailService implements EmailService {
     };
 
     asyncQueue.saturated = () => {
-      log(`Queue is saturated [${asyncQueue.length()}]. Pausing list pages`);
-      listEmailState.queueSaturated = true;
+      messageQueue.pause();
     };
 
     asyncQueue.unsaturated = () => {
-      log('Resuming list pages');
+      messageQueue.resume();
+    };
+
+    messageQueue.saturated = () => {
+      log(
+        `Fetch message queue is saturated [${asyncQueue.length()}]. Pausing list pages`,
+      );
+      listEmailState.queueSaturated = true;
+    };
+
+    messageQueue.unsaturated = () => {
+      log('Fetch message queue is unsaturated');
       listEmailState.queueSaturated = false;
       if (listEmailState.fetchPageInProgress === false) {
         listPages();
@@ -131,8 +174,20 @@ export class GmailEmailService implements EmailService {
     listPages();
   }
 
-  private async listEmailsInPage(gmail: gmail_v1.Gmail, pageToken?: string) {
+  private async listEmailIdsInPage(gmail: gmail_v1.Gmail, pageToken?: string) {
     const response = await gmail.users.messages.list({userId: 'me', pageToken});
+    if (response.status !== 200) {
+      throw new Error(response.statusText);
+    } else {
+      return response.data;
+    }
+  }
+
+  private async fetchEmail(gmail: gmail_v1.Gmail, messageId: string) {
+    const response = await gmail.users.messages.get({
+      userId: 'me',
+      id: messageId,
+    });
     if (response.status !== 200) {
       throw new Error(response.statusText);
     } else {
