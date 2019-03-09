@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as urlParse from 'url-parse';
 import {INTERNAL_PORT} from './constants';
 import {EmailService} from './email_services/types';
+import {log} from './log';
 
 export class WebServer {
   private app: express.Express;
@@ -18,10 +19,16 @@ export class WebServer {
    */
   installEmailServicesCallbacks(emailServices: EmailService[]) {
     emailServices.forEach((emailService) => {
-      this.app.get(emailService.OAUTH_CALLBACK, (req) => {
+      log(`Installing ${emailService.OAUTH_CALLBACK} callback`);
+      this.app.get(`/${emailService.OAUTH_CALLBACK}`, (req, res) => {
         const parsedUrl = urlParse(req.url, true);
         const code = parsedUrl.query['code'];
         emailService.registerOauthCode(code);
+
+        res.write('Authenticated successfully');
+        // TODO: enable this after fetching redirection url and opening different tab
+        // res.write('<script>window.close();</script>');
+        res.end();
       });
     });
   }

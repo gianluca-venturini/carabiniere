@@ -3,14 +3,16 @@ import {OAuth2Client} from 'googleapis-common';
 import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  GOOGLE_OAUTH_CALLBACK,
   GOOGLE_OAUTH_REDIRECT_URL,
 } from '../constants';
+import {log} from '../log';
 import {EmailService} from './types';
 
 const SCOPES = ['https://mail.google.com/'];
 
 export class GmailEmailService implements EmailService {
-  public OAUTH_CALLBACK = GOOGLE_OAUTH_REDIRECT_URL;
+  public OAUTH_CALLBACK = GOOGLE_OAUTH_CALLBACK;
 
   private oauthClient: OAuth2Client;
 
@@ -34,5 +36,6 @@ export class GmailEmailService implements EmailService {
   async registerOauthCode(code: string) {
     const {tokens} = await this.oauthClient.getToken(code);
     this.oauthClient.setCredentials(tokens);
+    log('Successfully generated auth token');
   }
 }
