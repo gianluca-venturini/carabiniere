@@ -24,9 +24,13 @@ const LOG_LEVEL = envConfig('log_level', 'debug', [
   'error',
 ]) as MessageLevel;
 
-// Gmail params
+/**
+ * Gmail params
+ */
 const GOOGLE_CLIENT_ID = envConfig('GOOGLE_CLIENT_ID');
 const GOOGLE_CLIENT_SECRET = envConfig('GOOGLE_CLIENT_SECRET');
+// Variable used for testing purposes only
+const GOOGLE_OAUTH_TOKEN = envConfig('GOOGLE_OAUTH_TOKEN', null);
 
 /**
  * Get variable from env.
@@ -36,7 +40,8 @@ const GOOGLE_CLIENT_SECRET = envConfig('GOOGLE_CLIENT_SECRET');
  */
 export function envConfig(
   envName: string,
-  defaultValue?: string,
+  // If the default value is null the variable is not mandatory
+  defaultValue?: string | null,
   allowedValues?: ReadonlyArray<string>,
 ): string {
   const envValue = process.env[envName];
@@ -56,6 +61,9 @@ export function envConfig(
     } else {
       return envValue;
     }
+  }
+  if (defaultValue === null) {
+    return undefined;
   }
   if (defaultValue !== undefined) {
     console.warn(`Using default value [${envName}]: ${defaultValue}`);
@@ -77,5 +85,6 @@ export {
   GOOGLE_CLIENT_SECRET,
   GOOGLE_OAUTH_CALLBACK,
   GOOGLE_OAUTH_REDIRECT_URL,
+  GOOGLE_OAUTH_TOKEN,
   LOG_LEVEL,
 };

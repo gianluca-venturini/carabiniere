@@ -1,3 +1,4 @@
+import {queue} from 'async';
 import * as _ from 'lodash';
 import {MessageLevel} from './constants';
 import {SERVICES} from './email_services/index';
@@ -10,6 +11,12 @@ const emailServices = _.keys(SERVICES).map((serviceName) => {
   const service = new EmailService();
   const authUrl = service.getAuthUrl();
   log(authUrl, MessageLevel.INFO);
+  service.listAllEmails(
+    queue((message, callback) => {
+      console.log(`Processing message ${message.id}`);
+      setTimeout(callback, 1);
+    }, 10),
+  );
   return service;
 });
 
