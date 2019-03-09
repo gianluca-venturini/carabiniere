@@ -11,7 +11,6 @@ export class WebServer {
 
   constructor() {
     this.app = express();
-    this.server = http.createServer(this.app);
   }
 
   /**
@@ -31,6 +30,7 @@ export class WebServer {
    * Listen on internal port
    */
   listen() {
+    this.server = http.createServer(this.app);
     this.server.listen(INTERNAL_PORT);
   }
 }

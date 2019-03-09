@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {LOG_LEVEL} from './constants';
+import {LOG_LEVEL, MessageLevel} from './constants';
 
 // Describes the verbosity of every level
 const LEVELS: {[level in MessageLevel]: ReadonlyArray<MessageLevel>} = {

@@ -34,7 +34,7 @@ const GOOGLE_CLIENT_SECRET = envConfig('GOOGLE_CLIENT_SECRET');
  * If default value not present terminate the process with an error.
  * If the value doesn't match allowed values then an error is raised.
  */
-function envConfig(
+export function envConfig(
   envName: string,
   defaultValue?: string,
   allowedValues?: ReadonlyArray<string>,

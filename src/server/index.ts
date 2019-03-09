@@ -1,7 +1,7 @@
-import {log} from 'console';
 import * as _ from 'lodash';
 import {MessageLevel} from './constants';
 import {SERVICES} from './email_services/index';
+import {log} from './log';
 import {WebServer} from './web_server';
 
 /** Instantiate all the email services */
