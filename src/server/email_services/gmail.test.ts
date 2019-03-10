@@ -148,7 +148,7 @@ describe('List all emails flow', () => {
       if (state.processedMessaged === 3) {
         done();
       }
-    }, 2);
+    }, 1);
 
     google.gmail = jest.fn(
       () =>
@@ -172,5 +172,45 @@ describe('List all emails flow', () => {
     );
 
     service.listAllEmails(asyncQueue);
+  });
+
+  it('Resolved the promise after all the messges are fetched', async () => {
+    const service = new GmailEmailService();
+    const state = {
+      fetchedMessages: 0,
+    };
+    const asyncQueue = async.queue((_, callback) => {
+      async.nextTick(callback);
+    }, 1);
+
+    google.gmail = jest.fn(
+      () =>
+        ({
+          users: {
+            messages: {
+              list: jest.fn(() => {
+                return Promise.resolve({
+                  status: 200,
+                  data: {
+                    messages: [{id: '1'}, {id: '2'}, {id: '3'}],
+                  },
+                });
+              }),
+              get: jest.fn(() => {
+                state.fetchedMessages += 1;
+                return Promise.resolve({
+                  status: 200,
+                  data: {},
+                });
+              }),
+            },
+          },
+        } as any),
+    );
+
+    const listAllMessages = service.listAllEmails(asyncQueue);
+    expect(state.fetchedMessages).toBe(0);
+    await listAllMessages;
+    expect(state.fetchedMessages).toBe(3);
   });
 });
