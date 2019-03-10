@@ -18,11 +18,6 @@ module.exports = {
       {enforce: 'pre', test: /\.js$/, loader: 'source-map-loader'},
     ],
   },
-  // This libraries will be cached by the browser between builds
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Carabiniere',

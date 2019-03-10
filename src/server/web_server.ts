@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as http from 'http';
 import * as _ from 'lodash';
+import * as path from 'path';
 import * as urlParse from 'url-parse';
 import {INTERNAL_PORT} from './constants';
 import {EmailService} from './email_services/types';
@@ -52,7 +53,15 @@ export class WebServer {
    * Listen on internal port
    */
   listen() {
+    this.installPublicFiles();
     this.server = http.createServer(this.app);
     this.server.listen(INTERNAL_PORT);
+  }
+
+  private installPublicFiles() {
+    this.app.use(express.static(path.join(__dirname, '../../dist')));
+    this.app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
+    });
   }
 }
