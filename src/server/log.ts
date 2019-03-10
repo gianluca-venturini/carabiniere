@@ -22,7 +22,7 @@ const LEVELS: {[level in MessageLevel]: ReadonlyArray<MessageLevel>} = {
  * Logs debug messges in console
  */
 export function log(message: string, level: MessageLevel = MessageLevel.DEBUG) {
-  if (LEVELS[LOG_LEVEL].indexOf(MessageLevel.INFO) === -1) {
+  if (LEVELS[LOG_LEVEL].indexOf(level) === -1) {
     return;
   }
 
