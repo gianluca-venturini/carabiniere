@@ -17,18 +17,22 @@ export class WebServer {
   /**
    * Install OAuth callbacks needed for receiving the code and build the auth token.
    */
-  installEmailServicesCallbacks(emailServices: EmailService[]) {
+  installEmailServicesCallbacks(
+    emailServices: EmailService[],
+    connectServiceCallback: () => void,
+  ) {
     emailServices.forEach((emailService) => {
       log(`Installing ${emailService.OAUTH_CALLBACK} callback`);
-      this.app.get(`/${emailService.OAUTH_CALLBACK}`, (req, res) => {
+      this.app.get(`/${emailService.OAUTH_CALLBACK}`, async (req, res) => {
         const parsedUrl = urlParse(req.url, true);
         const code = parsedUrl.query['code'];
-        emailService.registerOauthCode(code);
+        await emailService.registerOauthCode(code);
 
         res.write('Authenticated successfully');
         // TODO: enable this after fetching redirection url and opening different tab
         // res.write('<script>window.close();</script>');
         res.end();
+        connectServiceCallback();
       });
     });
   }

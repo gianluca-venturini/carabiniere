@@ -11,3 +11,9 @@ and place the values there. Otherwise the value in your ENV will be used.
 
 - GOOGLE_CLIENT_ID: Google client id
 - GOOGLE_CLIENT_SECRET: Google client secret
+
+## Features
+
+- Scan all the elements in a Gmail inbox.
+- Detects unprotected attachments on emails. Flags every time of attachment.
+- Detects unprotected Dropbox links that are still active. Ignores inactive links.

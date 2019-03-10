@@ -8,7 +8,7 @@ import {Report} from './report';
 import {EmailMessage} from './types';
 import {WebServer} from './web_server';
 
-const EMAIL_PARSER_WORKERS = 10;
+const EMAIL_PARSER_WORKERS = 100;
 
 const report = new Report();
 const emailParser = new EmailParser(report);
@@ -44,8 +44,6 @@ const parseEmailQueue = queue<EmailMessage>(async (message, callback) => {
   callback();
 }, EMAIL_PARSER_WORKERS);
 
-fillReport();
-
 const webServer = new WebServer();
-webServer.installEmailServicesCallbacks(emailServices);
+webServer.installEmailServicesCallbacks(emailServices, fillReport);
 webServer.listen();
