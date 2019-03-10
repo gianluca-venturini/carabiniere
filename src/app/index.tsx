@@ -1,9 +1,16 @@
+import {AnchorButton} from '@blueprintjs/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {TopBar} from './components/top_bar';
 
 class App extends React.Component {
   render() {
-    return <div>TODO: add app content here</div>;
+    return (
+      <div>
+        <TopBar />
+        <AnchorButton text='Click' />
+      </div>
+    );
   }
 }
 
