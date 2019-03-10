@@ -58,119 +58,122 @@ export class GmailEmailService implements EmailService {
    * when the queue is saturated in order to avoid exceeding available memory.
    */
   listAllEmails(asyncQueue: AsyncQueue<gmail_v1.Schema$Message>) {
-    log('Start listing emails');
-    const gmail = google.gmail({version: 'v1', auth: this.oauthClient});
-    // Queue used for fetching the next message
-    const messageQueue = queue<gmail_v1.Schema$Message>(
-      async (messageMetadata, done) => {
-        let attempts = 0;
-        while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
-          try {
-            const message = await this.fetchEmail(gmail, messageMetadata.id);
-            log(`Successfully fetched message ${message.id}`);
-            asyncQueue.push(message);
-            done();
-            break;
-          } catch (err) {
-            log(
-              `Error in fetching message ${messageMetadata.id} ${err}`,
-              MessageLevel.WARNING,
-            );
-            attempts += 1;
-          }
-        }
-        if (attempts >= MAX_PAGE_FETCH_ATTEMPTS) {
-          throw Error(
-            `Max attempts exceeded for message ${messageMetadata.id}`,
-          );
-        }
-      },
-      MESSAGE_FETCH_WORKERS,
-    );
-
-    const listEmailState: {
-      allPagesExplored: boolean;
-      pageToken?: string;
-      queueSaturated: boolean;
-      fetchPageInProgress: boolean;
-    } = {
-      allPagesExplored: false,
-      queueSaturated: asyncQueue.length() - asyncQueue.buffer > 0,
-      fetchPageInProgress: false,
-    };
-
-    const listPages = async () => {
-      log(
-        `Start listing pages, queue buffer ${
-          asyncQueue.buffer
-        }, elements in queue: ${asyncQueue.length()}`,
-      );
-      while (
-        listEmailState.allPagesExplored === false &&
-        listEmailState.queueSaturated === false
-      ) {
-        listEmailState.fetchPageInProgress = true;
-        let attempts = 0;
-        while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
-          try {
-            const data = await this.listEmailIdsInPage(
-              gmail,
-              listEmailState.pageToken,
-            );
-            const {messages, nextPageToken} = data;
-            log(
-              `Fetched ${messages.length} from page ${
-                listEmailState.pageToken
-              }`,
-            );
-            messageQueue.push(messages);
-            if (nextPageToken === undefined) {
-              log('All pages explored');
-              listEmailState.allPagesExplored = true;
-            } else {
-              listEmailState.pageToken = nextPageToken;
+    return new Promise<void>((resolve) => {
+      log('Start listing emails');
+      const gmail = google.gmail({version: 'v1', auth: this.oauthClient});
+      // Queue used for fetching the next message
+      const messageQueue = queue<gmail_v1.Schema$Message>(
+        async (messageMetadata, done) => {
+          let attempts = 0;
+          while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
+            try {
+              const message = await this.fetchEmail(gmail, messageMetadata.id);
+              log(`Successfully fetched message ${message.id}`);
+              asyncQueue.push(message);
+              done();
+              break;
+            } catch (err) {
+              log(
+                `Error in fetching message ${messageMetadata.id} ${err}`,
+                MessageLevel.WARNING,
+              );
+              attempts += 1;
             }
-            break;
-          } catch (err) {
-            log(
-              `Error in fetching page ${listEmailState.pageToken} ${err}`,
-              MessageLevel.WARNING,
-            );
-            attempts += 1;
           }
-        }
-
-        if (attempts >= MAX_PAGE_FETCH_ATTEMPTS) {
-          throw Error('Impossible to complete the operation');
-        }
-        listEmailState.fetchPageInProgress = false;
-      }
-    };
-
-    asyncQueue.saturated = () => {
-      messageQueue.pause();
-    };
-
-    asyncQueue.unsaturated = () => {
-      messageQueue.resume();
-    };
-
-    messageQueue.saturated = () => {
-      log(
-        `Fetch message queue is saturated [${asyncQueue.length()}]. Pausing list pages`,
+          if (attempts >= MAX_PAGE_FETCH_ATTEMPTS) {
+            throw Error(
+              `Max attempts exceeded for message ${messageMetadata.id}`,
+            );
+          }
+        },
+        MESSAGE_FETCH_WORKERS,
       );
-      listEmailState.queueSaturated = true;
-    };
 
-    messageQueue.unsaturated = () => {
-      log('Fetch message queue is unsaturated');
-      listEmailState.queueSaturated = false;
-      if (listEmailState.fetchPageInProgress === false) {
-        listPages();
-      }
-    };
+      const listEmailState: {
+        allPagesExplored: boolean;
+        pageToken?: string;
+        queueSaturated: boolean;
+        fetchPageInProgress: boolean;
+      } = {
+        allPagesExplored: false,
+        queueSaturated: asyncQueue.length() - asyncQueue.buffer > 0,
+        fetchPageInProgress: false,
+      };
 
-    listPages();
+      const listPages = async () => {
+        log(
+          `Start listing pages, queue buffer ${
+            asyncQueue.buffer
+          }, elements in queue: ${asyncQueue.length()}`,
+        );
+        while (
+          listEmailState.allPagesExplored === false &&
+          listEmailState.queueSaturated === false
+        ) {
+          listEmailState.fetchPageInProgress = true;
+          let attempts = 0;
+          while (attempts < MAX_PAGE_FETCH_ATTEMPTS) {
+            try {
+              const data = await this.listEmailIdsInPage(
+                gmail,
+                listEmailState.pageToken,
+              );
+              const {messages, nextPageToken} = data;
+              log(
+                `Fetched ${messages.length} from page ${
+                  listEmailState.pageToken
+                }`,
+              );
+              messageQueue.push(messages);
+              if (nextPageToken === undefined) {
+                log('All pages explored');
+                listEmailState.allPagesExplored = true;
+                resolve();
+              } else {
+                listEmailState.pageToken = nextPageToken;
+              }
+              break;
+            } catch (err) {
+              log(
+                `Error in fetching page ${listEmailState.pageToken} ${err}`,
+                MessageLevel.WARNING,
+              );
+              attempts += 1;
+            }
+          }
+
+          if (attempts >= MAX_PAGE_FETCH_ATTEMPTS) {
+            throw Error('Impossible to complete the operation');
+          }
+          listEmailState.fetchPageInProgress = false;
+        }
+      };
+
+      asyncQueue.saturated = () => {
+        messageQueue.pause();
+      };
+
+      asyncQueue.unsaturated = () => {
+        messageQueue.resume();
+      };
+
+      messageQueue.saturated = () => {
+        log(
+          `Fetch message queue is saturated [${asyncQueue.length()}]. Pausing list pages`,
+        );
+        listEmailState.queueSaturated = true;
+      };
+
+      messageQueue.unsaturated = () => {
+        log('Fetch message queue is unsaturated');
+        listEmailState.queueSaturated = false;
+        if (listEmailState.fetchPageInProgress === false) {
+          listPages();
+        }
+      };
+
+      listPages();
+    });
   }
 
   private async listEmailIdsInPage(gmail: gmail_v1.Gmail, pageToken?: string) {

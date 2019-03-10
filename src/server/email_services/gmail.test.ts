@@ -98,7 +98,6 @@ describe('List all emails flow', () => {
         } as any),
     );
 
-    jest.mock('googleapis');
     service.listAllEmails(asyncQueue);
   });
 
@@ -133,7 +132,6 @@ describe('List all emails flow', () => {
         } as any),
     );
 
-    jest.mock('googleapis');
     service.listAllEmails(asyncQueue);
   });
 
@@ -173,7 +171,6 @@ describe('List all emails flow', () => {
         } as any),
     );
 
-    jest.mock('googleapis');
     service.listAllEmails(asyncQueue);
   });
 });
