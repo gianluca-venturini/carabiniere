@@ -3,6 +3,7 @@ import * as http from 'http';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as urlParse from 'url-parse';
+import {ENDPOINTS} from '../app/constants';
 import {INTERNAL_PORT} from './constants';
 import {EmailService} from './email_services/types';
 import {log} from './log';
@@ -43,8 +44,12 @@ export class WebServer {
    * Makes the report instance available on REST APIs
    */
   installReportViewer(report: Report) {
-    this.app.get('/stats', async (req, res) => {
+    this.app.get(ENDPOINTS.STATS, async (req, res) => {
       res.write(JSON.stringify(report.getStats()));
+      res.end();
+    });
+    this.app.get(ENDPOINTS.FLAGGED_MESSAGES, async (req, res) => {
+      res.write(JSON.stringify(report.getAllFlaggedEmails()));
       res.end();
     });
   }
