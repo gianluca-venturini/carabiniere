@@ -1,5 +1,6 @@
 import async = require('async');
 import {google} from 'googleapis';
+import {Report} from '../report';
 import {GmailEmailService} from './gmail';
 
 describe('OAuth flow', () => {
@@ -8,7 +9,7 @@ describe('OAuth flow', () => {
   });
 
   it('Generate auth url', () => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const authUrl = service.getAuthUrl();
     expect(authUrl).toBe('test_url');
   });
@@ -51,7 +52,7 @@ describe('List all emails flow', () => {
   });
 
   it('List 3 emails in 1 page, no concurrency', (done) => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const state = {
       processedMessaged: 0,
     };
@@ -68,7 +69,7 @@ describe('List all emails flow', () => {
   });
 
   it('List 9 emails in 3 pages, no concurrency', (done) => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const state = {
       processedMessaged: 0,
     };
@@ -102,7 +103,7 @@ describe('List all emails flow', () => {
   });
 
   it('List 9 emails in 3 pages, concurrency 2', (done) => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const state = {
       processedMessaged: 0,
     };
@@ -136,7 +137,7 @@ describe('List all emails flow', () => {
   });
 
   it('List 3 emails in 1 page, no concurrency, 2 attempts', (done) => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const state = {
       processedMessaged: 0,
       status: 500, // First attempt will result in error
@@ -175,7 +176,7 @@ describe('List all emails flow', () => {
   });
 
   it('Resolved the promise after all the messges are fetched', async () => {
-    const service = new GmailEmailService();
+    const service = new GmailEmailService(new Report());
     const state = {
       fetchedMessages: 0,
     };

@@ -18,13 +18,16 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.readonly',
   'https://www.googleapis.com/auth/gmail.modify',
 ];
+// Number of times a worker attempt to fetch a message
 const MAX_PAGE_FETCH_ATTEMPTS = 3;
-const MESSAGE_FETCH_WORKERS = 20;
+// Number of concurrent workers that are fetching messages
+const MESSAGE_FETCH_WORKERS = 5;
+// Stop fetching new pages if the messages are more than this number
+const MAX_FETCH_MESSAGES_IN_QUEUE = 200;
 
 interface ListEmailState {
   allPagesExplored: boolean;
   pageToken?: string;
-  queueSaturated: boolean;
   fetchPageInProgress: boolean;
 }
 
@@ -78,36 +81,42 @@ export class GmailEmailService implements EmailService {
 
       const listEmailState: ListEmailState = {
         allPagesExplored: false,
-        queueSaturated: asyncQueue.length() - asyncQueue.buffer > 0,
         fetchPageInProgress: false,
       };
 
       // When output queue saturated we stop fetching messages
       asyncQueue.saturated = () => {
+        log(
+          `Parse queue is saturated [${asyncQueue.length()}]. Pausing fetch messages`,
+        );
         messageQueue.pause();
       };
 
       // When output queue unsaturated we resume fetching messages
       asyncQueue.unsaturated = () => {
+        log(
+          `Parse queue is unsaturated [${asyncQueue.length()}]. Buffer [${
+            asyncQueue.buffer
+          }]. Resuming fetch messages.`,
+        );
         messageQueue.resume();
       };
 
       // When message fetch queue saturated we stop fetching new pages
       messageQueue.saturated = () => {
         log(
-          `Fetch message queue is saturated [${asyncQueue.length()}]. Pausing list pages`,
+          `Fetch message queue is saturated [${messageQueue.length()}]. Pausing list pages`,
         );
-        listEmailState.queueSaturated = true;
       };
 
       // When message fetch queue unsaturated we resume fetching new pages
       messageQueue.unsaturated = () => {
-        log('Fetch message queue is unsaturated');
-        listEmailState.queueSaturated = false;
-        // This condition is necessary in order to make `messageQueue.unsaturated` call idempotent
-        if (listEmailState.fetchPageInProgress === false) {
-          this.listPages(gmail, messageQueue, listEmailState, resolve);
-        }
+        log(
+          `Fetch message queue is unsaturated [${messageQueue.length()}]. Buffer [${
+            messageQueue.buffer
+          }]. Resuming list pages.`,
+        );
+        this.listPages(gmail, messageQueue, listEmailState, resolve);
       };
 
       this.listPages(gmail, messageQueue, listEmailState, resolve);
@@ -118,6 +127,7 @@ export class GmailEmailService implements EmailService {
    * Resume listing from the last page contained in listEmailState.
    * Write the results in messageQueue.
    * Stop listing when the queue is saturated or all pages are explored.
+   * Safe to call multiple times in parallel.
    */
   private listPages = async (
     gmail: gmail_v1.Gmail,
@@ -132,7 +142,8 @@ export class GmailEmailService implements EmailService {
     );
     while (
       listEmailState.allPagesExplored === false &&
-      listEmailState.queueSaturated === false
+      messageQueue.length() < MAX_FETCH_MESSAGES_IN_QUEUE &&
+      listEmailState.fetchPageInProgress === false
     ) {
       listEmailState.fetchPageInProgress = true;
       let attempts = 0;
@@ -152,8 +163,11 @@ export class GmailEmailService implements EmailService {
             log('All pages explored');
             listEmailState.allPagesExplored = true;
             // After the internal message queue is completely empty we can signal that
-            // all message are fetched
-            messageQueue.drain = allMessagesFetched;
+            // all messages are fetched
+            messageQueue.drain = () => {
+              this.report.stopFetchingPages();
+              allMessagesFetched();
+            };
           } else {
             listEmailState.pageToken = nextPageToken;
           }
@@ -212,7 +226,11 @@ export class GmailEmailService implements EmailService {
   }
 
   private async listEmailIdsInPage(gmail: gmail_v1.Gmail, pageToken?: string) {
-    const response = await gmail.users.messages.list({userId: 'me', pageToken});
+    const response = await gmail.users.messages.list({
+      userId: 'me',
+      pageToken,
+      maxResults: 50,
+    });
     if (response.status !== 200) {
       throw new Error(response.statusText);
     } else {

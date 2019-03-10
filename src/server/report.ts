@@ -18,6 +18,7 @@ export class Report {
     processedEmails: 0,
     fetchedEmails: 0,
     discoveredEmails: 0,
+    fetchingPages: true,
   };
 
   flagEmail(emailServiceId: EmailServiceId, emailId: string, flag: EmailFlag) {
@@ -49,6 +50,10 @@ export class Report {
   increaseDiscovereEmails(num = 1) {
     assert(num > 0);
     this.stats.discoveredEmails += num;
+  }
+
+  stopFetchingPages() {
+    this.stats.fetchingPages = false;
   }
 
   getStats() {

@@ -30,18 +30,21 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
     report.increaseDiscovereEmails();
     expect(report.getStats()).toEqual({
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 1,
+      fetchingPages: true,
     });
     report.increaseDiscovereEmails(2);
     expect(report.getStats()).toEqual({
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 3,
+      fetchingPages: true,
     });
   });
 
@@ -51,18 +54,21 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
     report.increaseFetchedEmails();
     expect(report.getStats()).toEqual({
       processedEmails: 0,
       fetchedEmails: 1,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
     report.increaseFetchedEmails(2);
     expect(report.getStats()).toEqual({
       processedEmails: 0,
       fetchedEmails: 3,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
   });
 
@@ -72,18 +78,38 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
     report.increaseProcessedEmails();
     expect(report.getStats()).toEqual({
       processedEmails: 1,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      fetchingPages: true,
     });
     report.increaseProcessedEmails(2);
     expect(report.getStats()).toEqual({
       processedEmails: 3,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      fetchingPages: true,
+    });
+  });
+
+  it('stop fetching pages', () => {
+    const report = new Report();
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      fetchingPages: true,
+    });
+    report.stopFetchingPages();
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      fetchingPages: false,
     });
   });
 });
