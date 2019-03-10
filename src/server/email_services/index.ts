@@ -1,6 +1,12 @@
 import {GmailEmailService} from './gmail';
 import {EmailService} from './types';
 
-export const SERVICES: {[serviceName: string]: new () => EmailService} = {
-  gmail: GmailEmailService,
+export const enum EmailServiceId {
+  GMAIL = 'gmail',
+}
+
+export const SERVICES: {
+  [serviceName in EmailServiceId]: new () => EmailService
+} = {
+  [EmailServiceId.GMAIL]: GmailEmailService,
 };

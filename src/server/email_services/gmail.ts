@@ -126,7 +126,6 @@ export class GmailEmailService implements EmailService {
             messageQueue.push(messages);
             if (nextPageToken === undefined) {
               log('All pages explored');
-              process.exit(0);
               listEmailState.allPagesExplored = true;
             } else {
               listEmailState.pageToken = nextPageToken;
