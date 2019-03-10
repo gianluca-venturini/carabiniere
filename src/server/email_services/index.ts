@@ -1,3 +1,4 @@
+import {Report} from '../report';
 import {GmailEmailService} from './gmail';
 import {EmailService} from './types';
 
@@ -6,7 +7,7 @@ export const enum EmailServiceId {
 }
 
 export const SERVICES: {
-  [serviceName in EmailServiceId]: new () => EmailService
+  [serviceName in EmailServiceId]: new (report: Report) => EmailService
 } = {
   [EmailServiceId.GMAIL]: GmailEmailService,
 };

@@ -1,4 +1,5 @@
 import {AsyncQueue} from 'async';
+import {Report} from '../report';
 import {EmailMessage} from '../types';
 
 export interface EmailService {

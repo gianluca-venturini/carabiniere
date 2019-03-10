@@ -1,3 +1,4 @@
+import * as assert from 'assert';
 import * as _ from 'lodash';
 import {EmailFlag} from './email_flagger/type';
 import {EmailServiceId} from './email_services';
@@ -13,6 +14,11 @@ interface FlaggedEmail {
  */
 export class Report {
   private flaggedEmails: {[serviceMessageId: string]: FlaggedEmail} = {};
+  private stats = {
+    processedEmails: 0,
+    fetchedEmails: 0,
+    discoveredEmails: 0,
+  };
 
   flagEmail(emailServiceId: EmailServiceId, emailId: string, flag: EmailFlag) {
     const flaggedEmail = this.getOrCreateFlaggedEmail(emailServiceId, emailId);
@@ -28,6 +34,25 @@ export class Report {
       // Converting from set of strings to array
       flags: Array.from(flaggedEmail.flags),
     }));
+  }
+
+  increaseProcessedEmails(num = 1) {
+    assert(num > 0);
+    this.stats.processedEmails += num;
+  }
+
+  increaseFetchedEmails(num = 1) {
+    assert(num > 0);
+    this.stats.fetchedEmails += num;
+  }
+
+  increaseDiscovereEmails(num = 1) {
+    assert(num > 0);
+    this.stats.discoveredEmails += num;
+  }
+
+  getStats() {
+    return {...this.stats};
   }
 
   private getOrCreateFlaggedEmail(

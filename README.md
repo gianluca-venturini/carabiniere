@@ -17,3 +17,7 @@ and place the values there. Otherwise the value in your ENV will be used.
 - Scan all the elements in a Gmail inbox.
 - Detects unprotected attachments on emails. Flags every time of attachment.
 - Detects unprotected Dropbox links that are still active. Ignores inactive links.
+
+## Endpoints
+
+`/stats`: returns stats reguarding the current email processing

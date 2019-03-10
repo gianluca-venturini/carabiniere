@@ -10,6 +10,7 @@ import {
   MessageLevel,
 } from '../constants';
 import {log} from '../log';
+import {Report} from '../report';
 import {EmailService} from './types';
 
 const SCOPES = [
@@ -18,7 +19,7 @@ const SCOPES = [
   'https://www.googleapis.com/auth/gmail.modify',
 ];
 const MAX_PAGE_FETCH_ATTEMPTS = 3;
-const MESSAGE_FETCH_WORKERS = 100;
+const MESSAGE_FETCH_WORKERS = 20;
 
 interface ListEmailState {
   allPagesExplored: boolean;
@@ -32,7 +33,7 @@ export class GmailEmailService implements EmailService {
 
   private oauthClient: OAuth2Client;
 
-  constructor() {
+  constructor(private report: Report) {
     this.oauthClient = new google.auth.OAuth2(
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET,
@@ -145,6 +146,7 @@ export class GmailEmailService implements EmailService {
           log(
             `Fetched ${messages.length} from page ${listEmailState.pageToken}`,
           );
+          this.report.increaseDiscovereEmails(messages.length);
           messageQueue.push(messages);
           if (nextPageToken === undefined) {
             log('All pages explored');
@@ -191,6 +193,7 @@ export class GmailEmailService implements EmailService {
           const message = await this.fetchEmail(gmail, messageMetadata.id);
           log(`Successfully fetched message ${message.id}`);
           asyncQueue.push(message);
+          this.report.increaseFetchedEmails();
           done();
           break;
         } catch (err) {

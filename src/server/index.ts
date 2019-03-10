@@ -8,7 +8,7 @@ import {Report} from './report';
 import {EmailMessage} from './types';
 import {WebServer} from './web_server';
 
-const EMAIL_PARSER_WORKERS = 100;
+const EMAIL_PARSER_WORKERS = 10;
 
 const report = new Report();
 const emailParser = new EmailParser(report);
@@ -31,7 +31,7 @@ async function fillReport() {
 /** Instantiate all the email services */
 const emailServices = _.keys(SERVICES).map((serviceName: EmailServiceId) => {
   const EmailService = SERVICES[serviceName];
-  const service = new EmailService();
+  const service = new EmailService(report);
   const authUrl = service.getAuthUrl();
   log(authUrl, MessageLevel.INFO);
   return service;
@@ -40,10 +40,12 @@ const emailServices = _.keys(SERVICES).map((serviceName: EmailServiceId) => {
 /** Initialize the parser worker queue */
 const parseEmailQueue = queue<EmailMessage>(async (message, callback) => {
   await emailParser.parseEmailMessage(message);
+  report.increaseProcessedEmails();
   // Indicate that the work is finished
   callback();
 }, EMAIL_PARSER_WORKERS);
 
 const webServer = new WebServer();
 webServer.installEmailServicesCallbacks(emailServices, fillReport);
+webServer.installReportViewer(report);
 webServer.listen();

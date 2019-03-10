@@ -5,6 +5,7 @@ import * as urlParse from 'url-parse';
 import {INTERNAL_PORT} from './constants';
 import {EmailService} from './email_services/types';
 import {log} from './log';
+import {Report} from './report';
 
 export class WebServer {
   private app: express.Express;
@@ -34,6 +35,16 @@ export class WebServer {
         res.end();
         connectServiceCallback();
       });
+    });
+  }
+
+  /**
+   * Makes the report instance available on REST APIs
+   */
+  installReportViewer(report: Report) {
+    this.app.get('/stats', async (req, res) => {
+      res.write(JSON.stringify(report.getStats()));
+      res.end();
     });
   }
 
