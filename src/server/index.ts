@@ -8,7 +8,7 @@ import {Report} from './report';
 import {EmailMessage} from './types';
 import {WebServer} from './web_server';
 
-const EMAIL_PARSER_WORKERS = 1;
+const EMAIL_PARSER_WORKERS = 20;
 
 const report = new Report();
 const emailParser = new EmailParser(report);

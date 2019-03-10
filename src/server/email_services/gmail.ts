@@ -21,7 +21,7 @@ const SCOPES = [
 // Number of times a worker attempt to fetch a message
 const MAX_PAGE_FETCH_ATTEMPTS = 3;
 // Number of concurrent workers that are fetching messages
-const MESSAGE_FETCH_WORKERS = 5;
+const MESSAGE_FETCH_WORKERS = 50;
 // Stop fetching new pages if the messages are more than this number
 const MAX_FETCH_MESSAGES_IN_QUEUE = 200;
 
