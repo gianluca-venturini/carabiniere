@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/app/index.tsx',
@@ -22,4 +23,10 @@ module.exports = {
     react: 'React',
     'react-dom': 'ReactDOM',
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Carabiniere',
+      template: './src/app/index.html',
+    }),
+  ],
 };
