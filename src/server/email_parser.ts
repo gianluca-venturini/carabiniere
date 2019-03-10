@@ -18,6 +18,10 @@ export class EmailParser {
         emailFlagger: new EMAIL_FLAGGER[EmailFlag.UNPROTECTED_FILE](),
         emailFlag: EmailFlag.UNPROTECTED_FILE,
       },
+      {
+        emailFlagger: new EMAIL_FLAGGER[EmailFlag.UNPROTECTED_LINK](),
+        emailFlag: EmailFlag.UNPROTECTED_LINK,
+      },
     ];
   }
 
