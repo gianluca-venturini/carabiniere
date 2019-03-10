@@ -23,6 +23,9 @@ async function fillReport() {
   );
   await Promise.all(listAllEmailsPromises);
   log('All email services inspected');
+  parseEmailQueue.drain = () => {
+    console.log(JSON.stringify(report.getAllFlaggedEmails()));
+  };
 }
 
 /** Instantiate all the email services */
@@ -36,7 +39,6 @@ const emailServices = _.keys(SERVICES).map((serviceName: EmailServiceId) => {
 
 /** Initialize the parser worker queue */
 const parseEmailQueue = queue<EmailMessage>(async (message, callback) => {
-  console.log(`Processing message ${message.id}`);
   await emailParser.parseEmailMessage(message);
   // Indicate that the work is finished
   callback();

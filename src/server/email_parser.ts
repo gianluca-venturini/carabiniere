@@ -26,6 +26,7 @@ export class EmailParser {
    * in email_flag path. If an email is flagged is automatically added to the report.
    */
   async parseEmailMessage(message: EmailMessage) {
+    log(`Parse message ${message.id}`);
     const flaggerPromises = this.emailFlaggers.map(
       async ({emailFlagger, emailFlag}) => {
         const result = await emailFlagger.isEmailFlagged(message);

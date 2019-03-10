@@ -128,7 +128,8 @@ export class GmailEmailService implements EmailService {
               if (nextPageToken === undefined) {
                 log('All pages explored');
                 listEmailState.allPagesExplored = true;
-                resolve();
+                // After the internal message queue is completely empty we can resolve the promise
+                messageQueue.drain = resolve;
               } else {
                 listEmailState.pageToken = nextPageToken;
               }
