@@ -61,3 +61,23 @@
 .Row:hover {
   background-color: #9adeff36;
 }
+
+/* Tag colors */
+.tagBlue {
+  background-color: #0984e3;
+}
+.tagPink {
+  background-color: #fd79a8;
+}
+.tagYellow {
+  background-color: #fdcb6e;
+}
+.tagGray {
+  background-color: #b2bec3;
+}
+.tagOrange {
+  background-color: #e17055;
+}
+.tagViolet {
+  background-color: #6c5ce7;
+}

@@ -1,4 +1,5 @@
-import {Position, Tooltip} from '@blueprintjs/core';
+import {Position, Tag, Tooltip} from '@blueprintjs/core';
+import * as crypto from 'crypto-js';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as React from 'react';
@@ -14,6 +15,15 @@ interface ContentBodyProps {
 
 // TODO: fetch user email from backend in order to redirect correctly in all edge cases
 const userEmail = 0;
+
+const tagColorClasses = [
+  styles.tagBlue,
+  styles.tagViolet,
+  styles.tagOrange,
+  styles.tagGray,
+  styles.tagYellow,
+  styles.tagPink,
+];
 
 /**
  * Renders all the emails.
@@ -31,6 +41,13 @@ export const ContentBody = (props: ContentBodyProps) => {
       return moment(date).format('LL');
     }
   };
+  const getTagClass = (flag: string) => {
+    // Color based on an hash of the flag
+    const classIndex =
+      parseInt(crypto.SHA256(flag).toString(), 16) % tagColorClasses.length;
+    return tagColorClasses[classIndex];
+  };
+
   // Function for rendering one row of the table
   const rowRenderer: ListRowRenderer = ({style, index}) => {
     const {messages} = props;
@@ -48,7 +65,7 @@ export const ContentBody = (props: ContentBodyProps) => {
         <div>
           {message.flags.map((flag) => {
             const flagLabel = (
-              <span className='bp3-tag .modifier'>{flag.flag}</span>
+              <Tag className={getTagClass(flag.flag)}>{flag.flag}</Tag>
             );
             const formatExtra = (extra: FlagExtra) => {
               return _.keys(extra)
