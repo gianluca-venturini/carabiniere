@@ -38,6 +38,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseDiscovereEmails();
@@ -45,6 +46,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 1,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseDiscovereEmails(2);
@@ -52,6 +54,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 3,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
   });
@@ -62,6 +65,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseFetchedEmails();
@@ -69,6 +73,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 1,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseFetchedEmails(2);
@@ -76,6 +81,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 3,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
   });
@@ -86,6 +92,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseProcessedEmails();
@@ -93,6 +100,7 @@ describe('Build stats', () => {
       processedEmails: 1,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.increaseProcessedEmails(2);
@@ -100,6 +108,34 @@ describe('Build stats', () => {
       processedEmails: 3,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
+      fetchingPages: true,
+    });
+  });
+
+  it('increase flagged emails', () => {
+    const report = new Report();
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      flaggedEmails: 0,
+      fetchingPages: true,
+    });
+    report.increaseFlaggedEmails();
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      flaggedEmails: 1,
+      fetchingPages: true,
+    });
+    report.increaseFlaggedEmails(2);
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      flaggedEmails: 3,
       fetchingPages: true,
     });
   });
@@ -110,6 +146,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: true,
     });
     report.stopFetchingPages();
@@ -117,6 +154,7 @@ describe('Build stats', () => {
       processedEmails: 0,
       fetchedEmails: 0,
       discoveredEmails: 0,
+      flaggedEmails: 0,
       fetchingPages: false,
     });
   });

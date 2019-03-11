@@ -17,6 +17,7 @@ export class Report {
     processedEmails: 0,
     fetchedEmails: 0,
     discoveredEmails: 0,
+    flaggedEmails: 0,
     fetchingPages: true,
   };
 
@@ -60,6 +61,11 @@ export class Report {
     this.stats.discoveredEmails += num;
   }
 
+  increaseFlaggedEmails(num = 1) {
+    assert(num > 0);
+    this.stats.flaggedEmails += num;
+  }
+
   stopFetchingPages() {
     this.stats.fetchingPages = false;
   }
@@ -71,6 +77,7 @@ export class Report {
   private getOrCreateFlaggedEmail(email: EmailMetadata) {
     const key = this.getEmailKey(email.emailServiceId, email.emailId);
     if (this.flaggedEmails[key] === undefined) {
+      this.increaseFlaggedEmails();
       this.flaggedEmails[key] = {
         ...email,
         flags: new Map<EmailFlag, FlagExtra | undefined>(),

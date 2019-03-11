@@ -23,5 +23,6 @@ export interface StatsResponse {
   processedEmails: number;
   fetchedEmails: number;
   discoveredEmails: number;
+  flaggedEmails: number;
   fetchingPages: boolean;
 }

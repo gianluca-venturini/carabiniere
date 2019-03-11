@@ -80,6 +80,11 @@ export class Foooter extends React.Component<Props> {
           'Emails that already have completed all heuristics',
           displayStats.processedEmails,
         )}
+        {this.renderStat(
+          'Flagged emails',
+          'Emails that contains sensitive information',
+          displayStats.flaggedEmails,
+        )}
       </div>
     );
   }
