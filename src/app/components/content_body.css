@@ -1,6 +1,59 @@
+@import './constants.css';
+
 .ContentBody {
-  width: 80vw;
+  width: var(--bodyWidth);
   margin: auto;
+  position: relative;
+  display: block;
+  height: calc(100vh - var(--topBarHeight));
+}
+
+.ContentBodyTableHeader {
+  height: var(--tableHeaderHeight);
+}
+
+.Row > * {
+  height: var(--topBarHeight);
+  display: inline-block;
+}
+
+/* Hardcoded column sizes */
+.ContentBodyTableHeader > *,
+.Row > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.ContentBodyTableHeader > *:nth-child(0),
+.Row > *:nth-child(0) {
+  width: 200px;
+}
+.ContentBodyTableHeader > *:nth-child(1),
+.Row > *:nth-child(1) {
+  width: 200px;
+}
+.ContentBodyTableHeader > *:nth-child(2),
+.Row > *:nth-child(2) {
+  width: 200px;
+}
+.ContentBodyTableHeader > *:nth-child(3),
+.Row > *:nth-child(3) {
+  width: 200px;
+}
+.ContentBodyTableHeader > *:nth-child(4),
+.Row > *:nth-child(4) {
+  width: 200px;
+}
+.ContentBodyTableHeader > *:nth-child(5),
+.Row > *:nth-child(5) {
+  width: 200px;
+}
+
+.ContentBodyTableBody {
+  display: block;
+  position: relative;
+  width: var(--bodyWidth);
+  height: calc(100vh - var(--tableHeaderHeight) - var(--topBarHeight));
+  overflow: hidden;
 }
 
 .Row:hover {
