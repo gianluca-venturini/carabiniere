@@ -1,0 +1,7 @@
+:root {
+  --topBarHeight: 40px;
+  --tableHeaderHeight: 30px;
+  --bodyWidth: 1400px;
+  /* Keep this value in sync with js */
+  --tableRowHeight: 30px;
+}

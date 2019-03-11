@@ -1,4 +1,4 @@
-import * as cx from 'classnames';
+import * as moment from 'moment';
 import * as React from 'react';
 import {AutoSizer} from 'react-virtualized/dist/commonjs/AutoSizer';
 import {List, ListRowRenderer} from 'react-virtualized/dist/commonjs/List';
@@ -20,6 +20,14 @@ export const ContentBody = (props: ContentBodyProps) => {
   const makeHandleClick = (emailId: string) => () => {
     window.open(`https://mail.google.com/mail/u/${userEmail}/#sent/${emailId}`);
   };
+  const formatDate = (date: Date) => {
+    const now = new Date();
+    if (now.getTime() - date.getTime() < 24 * 60 * 60 * 1000) {
+      return moment(date).fromNow();
+    } else {
+      return moment(date).format('LL');
+    }
+  };
   // Function for rendering one row of the table
   const rowRenderer: ListRowRenderer = ({style, index}) => {
     const {messages} = props;
@@ -39,7 +47,7 @@ export const ContentBody = (props: ContentBodyProps) => {
             <span className='bp3-tag .modifier'>{flag}</span>
           ))}
         </div>
-        <div>{`${message.date}`}</div>
+        <div>{`${formatDate(message.date)}`}</div>
       </div>
     );
   };

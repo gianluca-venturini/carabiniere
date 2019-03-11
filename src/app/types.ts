@@ -4,11 +4,11 @@ import {EmailServiceId} from '../server/email_services';
 export interface Message {
   emailId: string;
   emailServiceId: EmailServiceId;
-  from: string;
-  to: string;
-  subject: string;
+  from?: string;
+  to?: string;
+  subject?: string;
   flags: ReadonlyArray<EmailFlag>;
-  date: Date;
+  date?: Date;
 }
 
 /**

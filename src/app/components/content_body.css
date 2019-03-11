@@ -15,6 +15,10 @@
 .Row > * {
   height: var(--topBarHeight);
   display: inline-block;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Hardcoded column sizes */
@@ -25,26 +29,22 @@
 }
 .ContentBodyTableHeader > *:nth-child(0),
 .Row > *:nth-child(0) {
-  width: 200px;
+  width: 400px;
 }
 .ContentBodyTableHeader > *:nth-child(1),
 .Row > *:nth-child(1) {
-  width: 200px;
+  width: 400px;
 }
 .ContentBodyTableHeader > *:nth-child(2),
 .Row > *:nth-child(2) {
-  width: 200px;
+  width: 300px;
 }
 .ContentBodyTableHeader > *:nth-child(3),
 .Row > *:nth-child(3) {
-  width: 200px;
+  width: 300px;
 }
 .ContentBodyTableHeader > *:nth-child(4),
 .Row > *:nth-child(4) {
-  width: 200px;
-}
-.ContentBodyTableHeader > *:nth-child(5),
-.Row > *:nth-child(5) {
   width: 200px;
 }
 

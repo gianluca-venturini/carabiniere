@@ -3,7 +3,7 @@ import {EmailFlag, EmailFlagger} from './email_flagger/type';
 import {EmailServiceId} from './email_services';
 import {log} from './log';
 import {Report} from './report';
-import {EmailMessage} from './types';
+import {EmailMessage, EmailMetadata, Omit} from './types';
 
 export class EmailParser {
   private emailFlaggers: ReadonlyArray<{
@@ -36,12 +36,37 @@ export class EmailParser {
         const result = await emailFlagger.isEmailFlagged(message);
         if (result.flagged) {
           log(`Flagged email ${message.id} with ${emailFlag}`);
-          // TODO: remove the hardcoded service and replace with actual one
-          this.report.flagEmail(EmailServiceId.GMAIL, message.id, emailFlag);
+          const email = {
+            // TODO: remove the hardcoded service and replace with actual one
+            emailServiceId: EmailServiceId.GMAIL,
+            emailId: message.id,
+            date: new Date(parseInt(message.internalDate, 10)),
+            ...this.getEmailInfo(message),
+          };
+          this.report.flagEmail(email, emailFlag);
         }
       },
     );
     // Terminate the returned promise only when all the flaggers are done
     return Promise.all(flaggerPromises);
+  }
+
+  getEmailInfo(message: EmailMessage) {
+    const emailMetadata: Omit<
+      Omit<EmailMetadata, 'emailServiceId'>,
+      'emailId'
+    > = {};
+    message.payload.headers.forEach((header) => {
+      if (header.name === 'From') {
+        emailMetadata.from = header.value;
+      }
+      if (header.name === 'To') {
+        emailMetadata.to = header.value;
+      }
+      if (header.name === 'Subject') {
+        emailMetadata.subject = header.value;
+      }
+    });
+    return emailMetadata;
   }
 }

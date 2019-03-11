@@ -2,15 +2,9 @@ import * as assert from 'assert';
 import * as _ from 'lodash';
 import {FlaggedEmailsResponse} from '../app/types';
 import {EmailFlag} from './email_flagger/type';
-import {EmailServiceId} from './email_services';
+import {EmailMetadata} from './types';
 
-interface FlaggedEmail {
-  emailServiceId: EmailServiceId;
-  emailId: string;
-  from: string;
-  to: string;
-  subject: string;
-  date: Date;
+interface FlaggedEmail extends EmailMetadata {
   flags: Set<EmailFlag>;
 }
 
@@ -26,8 +20,8 @@ export class Report {
     fetchingPages: true,
   };
 
-  flagEmail(emailServiceId: EmailServiceId, emailId: string, flag: EmailFlag) {
-    const flaggedEmail = this.getOrCreateFlaggedEmail(emailServiceId, emailId);
+  flagEmail(email: EmailMetadata, flag: EmailFlag) {
+    const flaggedEmail = this.getOrCreateFlaggedEmail(email);
     flaggedEmail.flags.add(flag);
   }
 
@@ -66,21 +60,12 @@ export class Report {
     return {...this.stats};
   }
 
-  private getOrCreateFlaggedEmail(
-    emailServiceId: EmailServiceId,
-    emailId: string,
-  ) {
-    const key = this.getEmailKey(emailServiceId, emailId);
+  private getOrCreateFlaggedEmail(email: EmailMetadata) {
+    const key = this.getEmailKey(email.emailServiceId, email.emailId);
     if (this.flaggedEmails[key] === undefined) {
       this.flaggedEmails[key] = {
-        emailServiceId,
-        emailId,
+        ...email,
         flags: new Set(),
-        // TODO: populate this fields
-        subject: '',
-        from: '',
-        to: '',
-        date: new Date(),
       };
     }
     return this.flaggedEmails[key];
