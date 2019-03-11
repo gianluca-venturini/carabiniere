@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as _ from 'lodash';
-import {FlaggedEmailsResponse} from '../app/types';
+import {FlaggedEmailsResponse, StatsResponse} from '../app/types';
 import {EmailFlag} from './email_flagger/type';
 import {EmailMetadata} from './types';
 
@@ -13,7 +13,7 @@ interface FlaggedEmail extends EmailMetadata {
  */
 export class Report {
   private flaggedEmails: {[serviceMessageId: string]: FlaggedEmail} = {};
-  private stats = {
+  private stats: StatsResponse = {
     processedEmails: 0,
     fetchedEmails: 0,
     discoveredEmails: 0,
@@ -56,7 +56,7 @@ export class Report {
     this.stats.fetchingPages = false;
   }
 
-  getStats() {
+  getStats(): StatsResponse {
     return {...this.stats};
   }
 

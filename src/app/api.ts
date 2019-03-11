@@ -1,5 +1,5 @@
 import {ENDPOINTS} from './constants';
-import {FlaggedEmailsResponse} from './types';
+import {FlaggedEmailsResponse, StatsResponse} from './types';
 
 export const fetchFlaggedEmails = async (): Promise<FlaggedEmailsResponse> => {
   const reponse = await fetch(ENDPOINTS.FLAGGED_MESSAGES);
@@ -16,17 +16,12 @@ export const fetchFlaggedEmails = async (): Promise<FlaggedEmailsResponse> => {
       };
     }),
   } as FlaggedEmailsResponse;
-  // return {
-  //   messages: [
-  //     {
-  //       emailId: '123',
-  //       emailServiceId: EmailServiceId.GMAIL,
-  //       from: 'from@gmail.com',
-  //       to: 'to@gmail.com',
-  //       subject: 'This is the subject',
-  //       flags: [],
-  //       date: new Date(),
-  //     },
-  //   ],
-  // };
+};
+
+export const fetchStats = async (): Promise<StatsResponse> => {
+  const reponse = await fetch(ENDPOINTS.STATS);
+  if (reponse.status !== 200) {
+    throw Error('Failed to fetch flagged emails');
+  }
+  return reponse.json();
 };

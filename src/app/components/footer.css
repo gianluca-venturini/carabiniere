@@ -1,0 +1,26 @@
+@import './constants.css';
+
+.Footer {
+  position: absolute;
+  bottom: 0;
+  height: var(--footerHeight);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 200px;
+  height: 80px;
+  display: inline-block;
+  margin: 10px;
+  text-align: center;
+  padding: 14px;
+}
+
+.card > * {
+  padding: 4px;
+}

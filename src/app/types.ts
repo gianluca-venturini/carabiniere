@@ -18,3 +18,10 @@ export interface Message {
 export interface FlaggedEmailsResponse {
   messages: ReadonlyArray<Message>;
 }
+
+export interface StatsResponse {
+  processedEmails: number;
+  fetchedEmails: number;
+  discoveredEmails: number;
+  fetchingPages: boolean;
+}
