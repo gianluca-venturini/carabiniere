@@ -1,7 +1,6 @@
 import {Position, Tooltip} from '@blueprintjs/core';
 import * as moment from 'moment';
 import * as React from 'react';
-import {Position} from 'react-virtualized';
 import {AutoSizer} from 'react-virtualized/dist/commonjs/AutoSizer';
 import {List, ListRowRenderer} from 'react-virtualized/dist/commonjs/List';
 import {Message} from '../types';
