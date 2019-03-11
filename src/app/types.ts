@@ -1,4 +1,4 @@
-import {EmailFlag} from '../server/email_flagger/type';
+import {EmailFlag, FlagExtra} from '../server/email_flagger/type';
 import {EmailServiceId} from '../server/email_services';
 
 export interface Message {
@@ -7,7 +7,7 @@ export interface Message {
   from?: string;
   to?: string;
   subject?: string;
-  flags: ReadonlyArray<EmailFlag>;
+  flags: ReadonlyArray<{flag: EmailFlag; extra: FlagExtra}>;
   date?: Date;
 }
 

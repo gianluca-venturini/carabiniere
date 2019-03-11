@@ -1,4 +1,4 @@
-import {UnprotectedFile} from './unprotected_file';
+import {isExtensionWhitelisted, UnprotectedFile} from './unprotected_file';
 
 describe('Unprotected files flagger', () => {
   it('flags email with file', async () => {
@@ -17,5 +17,26 @@ describe('Unprotected files flagger', () => {
       payload: {},
     });
     expect(result.flagged).toBeFalsy();
+  });
+});
+
+describe('Correctly classify extensions', () => {
+  it('Extension not whitelisted', () => {
+    expect(isExtensionWhitelisted('test.jpg')).toBeFalsy();
+  });
+  it('Extension whitelisted', () => {
+    expect(isExtensionWhitelisted('test.ics')).toBeTruthy();
+  });
+  it('Empty is whitelisted', () => {
+    expect(isExtensionWhitelisted('test')).toBeTruthy();
+  });
+  it('No extension', () => {
+    expect(isExtensionWhitelisted('test..')).toBeTruthy();
+  });
+  it('Invalid filename', () => {
+    expect(isExtensionWhitelisted('......')).toBeTruthy();
+  });
+  it('Invisible file without extension', () => {
+    expect(isExtensionWhitelisted('.gitignore')).toBeTruthy();
   });
 });

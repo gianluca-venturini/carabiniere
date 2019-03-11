@@ -1,8 +1,10 @@
 import {Position, Tooltip} from '@blueprintjs/core';
+import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as React from 'react';
 import {AutoSizer} from 'react-virtualized/dist/commonjs/AutoSizer';
 import {List, ListRowRenderer} from 'react-virtualized/dist/commonjs/List';
+import {FlagExtra} from '../../server/email_flagger/type';
 import {Message} from '../types';
 import * as styles from './content_body.css';
 
@@ -44,9 +46,26 @@ export const ContentBody = (props: ContentBodyProps) => {
         <div>{message.to}</div>
         <div>{message.subject}</div>
         <div>
-          {message.flags.map((flag) => (
-            <span className='bp3-tag .modifier'>{flag}</span>
-          ))}
+          {message.flags.map((flag) => {
+            const flagLabel = (
+              <span className='bp3-tag .modifier'>{flag.flag}</span>
+            );
+            const formatExtra = (extra: FlagExtra) => {
+              return _.keys(extra)
+                .map((extraName) => `${extraName}: ${flag.extra[extraName]}`)
+                .join('\n');
+            };
+            return flag.extra ? (
+              <Tooltip
+                content={formatExtra(flag.extra)}
+                position={Position.TOP}
+              >
+                {flagLabel}
+              </Tooltip>
+            ) : (
+              flagLabel
+            );
+          })}
         </div>
         <div>{`${formatDate(message.date)}`}</div>
       </div>

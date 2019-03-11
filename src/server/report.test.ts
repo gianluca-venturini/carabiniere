@@ -19,12 +19,12 @@ describe('Build a flagged emails report', () => {
         {
           emailId: 'id1',
           emailServiceId: EmailServiceId.GMAIL,
-          flags: [EmailFlag.UNPROTECTED_FILE],
+          flags: [{flag: EmailFlag.UNPROTECTED_FILE}],
         },
         {
           emailId: 'id2',
           emailServiceId: EmailServiceId.GMAIL,
-          flags: [EmailFlag.UNPROTECTED_FILE],
+          flags: [{flag: EmailFlag.UNPROTECTED_FILE}],
         },
       ],
     });

@@ -27,7 +27,7 @@ export class EmailParser {
 
   /**
    * Parse the email message attempting to flag email using all the methods contained
-   * in email_flag path. If an email is flagged is automatically added to the report.
+   * in email_flag/ path. If an email is flagged, it's automatically added to the report.
    */
   async parseEmailMessage(message: EmailMessage) {
     log(`Parse message ${message.id}`);
@@ -43,7 +43,7 @@ export class EmailParser {
             date: new Date(parseInt(message.internalDate, 10)),
             ...this.getEmailInfo(message),
           };
-          this.report.flagEmail(email, emailFlag);
+          this.report.flagEmail(email, emailFlag, result.extra);
         }
       },
     );

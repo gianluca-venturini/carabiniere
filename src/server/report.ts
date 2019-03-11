@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import * as _ from 'lodash';
 import {FlaggedEmailsResponse, StatsResponse} from '../app/types';
-import {EmailFlag} from './email_flagger/type';
+import {EmailFlag, FlagExtra} from './email_flagger/type';
 import {EmailMetadata} from './types';
 
 interface FlaggedEmail extends EmailMetadata {
-  flags: Set<EmailFlag>;
+  flags: Map<EmailFlag, FlagExtra | undefined>;
 }
 
 /**
@@ -20,9 +20,14 @@ export class Report {
     fetchingPages: true,
   };
 
-  flagEmail(email: EmailMetadata, flag: EmailFlag) {
+  /**
+   * Used for tagging an email with a specific flag.
+   * If this function is called multiple times on the same email with the same
+   * flag the extra args will be overwritten.
+   */
+  flagEmail(email: EmailMetadata, flag: EmailFlag, extra?: FlagExtra) {
     const flaggedEmail = this.getOrCreateFlaggedEmail(email);
-    flaggedEmail.flags.add(flag);
+    flaggedEmail.flags.set(flag, extra);
   }
 
   /**
@@ -32,7 +37,10 @@ export class Report {
     const messages = _.values(this.flaggedEmails).map((flaggedEmail) => ({
       ...flaggedEmail,
       // Converting from set of strings to array
-      flags: Array.from(flaggedEmail.flags),
+      flags: Array.from(flaggedEmail.flags.keys()).map((emailFlag) => ({
+        flag: emailFlag,
+        extra: flaggedEmail.flags.get(emailFlag),
+      })),
     }));
     return {messages};
   }
@@ -65,7 +73,7 @@ export class Report {
     if (this.flaggedEmails[key] === undefined) {
       this.flaggedEmails[key] = {
         ...email,
-        flags: new Set(),
+        flags: new Map<EmailFlag, FlagExtra | undefined>(),
       };
     }
     return this.flaggedEmails[key];
