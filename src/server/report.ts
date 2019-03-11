@@ -18,7 +18,7 @@ export class Report {
     fetchedEmails: 0,
     discoveredEmails: 0,
     flaggedEmails: 0,
-    fetchingPages: true,
+    fetchingPages: false,
   };
 
   /**
@@ -64,6 +64,10 @@ export class Report {
   increaseFlaggedEmails(num = 1) {
     assert(num > 0);
     this.stats.flaggedEmails += num;
+  }
+
+  startFetchingPages() {
+    this.stats.fetchingPages = true;
   }
 
   stopFetchingPages() {

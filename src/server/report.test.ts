@@ -39,7 +39,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseDiscovereEmails();
     expect(report.getStats()).toEqual({
@@ -47,7 +47,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 1,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseDiscovereEmails(2);
     expect(report.getStats()).toEqual({
@@ -55,7 +55,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 3,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
   });
 
@@ -66,7 +66,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseFetchedEmails();
     expect(report.getStats()).toEqual({
@@ -74,7 +74,7 @@ describe('Build stats', () => {
       fetchedEmails: 1,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseFetchedEmails(2);
     expect(report.getStats()).toEqual({
@@ -82,7 +82,7 @@ describe('Build stats', () => {
       fetchedEmails: 3,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
   });
 
@@ -93,7 +93,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseProcessedEmails();
     expect(report.getStats()).toEqual({
@@ -101,7 +101,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseProcessedEmails(2);
     expect(report.getStats()).toEqual({
@@ -109,7 +109,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
   });
 
@@ -120,7 +120,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 0,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseFlaggedEmails();
     expect(report.getStats()).toEqual({
@@ -128,7 +128,7 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 1,
-      fetchingPages: true,
+      fetchingPages: false,
     });
     report.increaseFlaggedEmails(2);
     expect(report.getStats()).toEqual({
@@ -136,12 +136,20 @@ describe('Build stats', () => {
       fetchedEmails: 0,
       discoveredEmails: 0,
       flaggedEmails: 3,
-      fetchingPages: true,
+      fetchingPages: false,
     });
   });
 
   it('stop fetching pages', () => {
     const report = new Report();
+    expect(report.getStats()).toEqual({
+      processedEmails: 0,
+      fetchedEmails: 0,
+      discoveredEmails: 0,
+      flaggedEmails: 0,
+      fetchingPages: false,
+    });
+    report.startFetchingPages();
     expect(report.getStats()).toEqual({
       processedEmails: 0,
       fetchedEmails: 0,

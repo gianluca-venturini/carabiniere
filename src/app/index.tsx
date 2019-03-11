@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {fetchFlaggedEmails, fetchStats} from './api';
+import {fetchAuthUrl, fetchFlaggedEmails, fetchStats} from './api';
 import * as styles from './app.css';
 import {ContentBody} from './components/content_body';
 import {Foooter} from './components/footer';
@@ -26,10 +26,22 @@ class App extends React.Component<{}, AppState> {
     const {flaggedMessages, stats} = this.state;
     return (
       <div className={styles.App}>
-        <TopBar />
+        <TopBar
+          gmailAuthClick={this.handleGmailAuth}
+          fetchingData={stats && stats.fetchingPages}
+        />
         <Foooter stats={stats} />
         <ContentBody messages={flaggedMessages} />
       </div>
+    );
+  }
+
+  private handleGmailAuth = async () => {
+    const url = await fetchAuthUrl();
+    window.open(
+      url,
+      '_blank',
+      'toolbar=0,location=0,menubar=0,width=400,height=500',
     );
   }
 

@@ -17,15 +17,13 @@ const emailParser = new EmailParser(report);
  * Fetch all emails and fill the report with flagged emails.
  */
 async function fillReport() {
+  report.startFetchingPages();
   /** List all the emails contained in the all the services */
   const listAllEmailsPromises = emailServices.map((service) =>
     service.listAllEmails(parseEmailQueue),
   );
   await Promise.all(listAllEmailsPromises);
-  log('All email services inspected');
-  parseEmailQueue.drain = () => {
-    console.log(JSON.stringify(report.getAllFlaggedEmails()));
-  };
+  log('All email services inspected', MessageLevel.INFO);
 }
 
 /** Instantiate all the email services */

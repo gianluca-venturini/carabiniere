@@ -25,3 +25,12 @@ export const fetchStats = async (): Promise<StatsResponse> => {
   }
   return reponse.json();
 };
+
+export const fetchAuthUrl = async (): Promise<string> => {
+  const reponse = await fetch(ENDPOINTS.AUTH_URL);
+  if (reponse.status !== 200) {
+    throw Error('Failed to fetch flagged emails');
+  }
+  const parsedResponse = await reponse.json();
+  return parsedResponse.url;
+};

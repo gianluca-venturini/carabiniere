@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as urlParse from 'url-parse';
 import {ENDPOINTS} from '../app/constants';
 import {INTERNAL_PORT} from './constants';
+import {GmailEmailService} from './email_services/gmail';
 import {EmailService} from './email_services/types';
 import {log} from './log';
 import {Report} from './report';
@@ -31,11 +32,14 @@ export class WebServer {
         const code = parsedUrl.query['code'];
         await emailService.registerOauthCode(code);
 
-        res.write('Authenticated successfully');
-        // TODO: enable this after fetching redirection url and opening different tab
-        // res.write('<script>window.close();</script>');
+        res.write('<script>window.close();</script>');
         res.end();
         connectServiceCallback();
+      });
+      // TODO: get service name as a parameter
+      this.app.get(ENDPOINTS.AUTH_URL, async (req, res) => {
+        res.write(JSON.stringify({url: emailService.getAuthUrl()}));
+        res.end();
       });
     });
   }
