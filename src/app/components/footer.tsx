@@ -1,4 +1,4 @@
-import {Card, Elevation, Spinner} from '@blueprintjs/core';
+import {Card, Elevation, Position, Spinner, Tooltip} from '@blueprintjs/core';
 import * as React from 'react';
 import {StatsResponse} from '../types';
 import * as styles from './footer.css';
@@ -65,9 +65,21 @@ export class Foooter extends React.Component<Props> {
     };
     return (
       <div className={styles.Footer}>
-        {this.renderStat('Discovered emails', displayStats.discoveredEmails)}
-        {this.renderStat('Fetched emails', displayStats.fetchedEmails)}
-        {this.renderStat('Parsed emails', displayStats.processedEmails)}
+        {this.renderStat(
+          'Discovered emails',
+          'Email id found in inbox',
+          displayStats.discoveredEmails,
+        )}
+        {this.renderStat(
+          'Fetched emails',
+          'Entire email fetched',
+          displayStats.fetchedEmails,
+        )}
+        {this.renderStat(
+          'Parsed emails',
+          'Emails that already have completed all heuristics',
+          displayStats.processedEmails,
+        )}
       </div>
     );
   }
@@ -82,10 +94,16 @@ export class Foooter extends React.Component<Props> {
     this.forceUpdate();
   }
 
-  private renderStat = (description: string, value: number) => (
-    <Card interactive={true} elevation={Elevation.ZERO} className={styles.card}>
-      <div>{description}</div>
-      <div>{value}</div>
-    </Card>
+  private renderStat = (name: string, description: string, value: number) => (
+    <Tooltip content={description} position={Position.TOP}>
+      <Card
+        interactive={true}
+        elevation={Elevation.ZERO}
+        className={styles.card}
+      >
+        <div>{name}</div>
+        <div>{value}</div>
+      </Card>
+    </Tooltip>
   )
 }
