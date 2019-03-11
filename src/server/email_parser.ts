@@ -34,6 +34,7 @@ export class EmailParser {
     const flaggerPromises = this.emailFlaggers.map(
       async ({emailFlagger, emailFlag}) => {
         const result = await emailFlagger.isEmailFlagged(message);
+        console.log('HERE', emailFlag, result);
         if (result.flagged) {
           log(`Flagged email ${message.id} with ${emailFlag}`);
           const email = {

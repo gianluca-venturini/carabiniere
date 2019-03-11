@@ -2,7 +2,8 @@ import fetch from 'node-fetch';
 import {UnsecuredLinkService} from './types';
 
 export class DropboxService implements UnsecuredLinkService {
-  matchLink = /https:\/\/www.dropbox.com\/[^ ]+/g;
+  name = 'Dropbox';
+  matchLink = /https:\/\/www.dropbox.com\/[^ \?\"]+/g;
 
   async isLinkUnsecure(url: string) {
     const matchedPrefix = url.match(/^[^\?]+/g);

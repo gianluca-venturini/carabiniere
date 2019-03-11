@@ -52,8 +52,8 @@ export const ContentBody = (props: ContentBodyProps) => {
             );
             const formatExtra = (extra: FlagExtra) => {
               return _.keys(extra)
-                .map((extraName) => `${extraName}: ${flag.extra[extraName]}`)
-                .join('\n');
+                .map((extraName) => `${flag.extra[extraName]}`)
+                .join(' - ');
             };
             return flag.extra ? (
               <Tooltip
