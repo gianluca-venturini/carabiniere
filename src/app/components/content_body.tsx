@@ -1,5 +1,7 @@
+import {Position, Tooltip} from '@blueprintjs/core';
 import * as moment from 'moment';
 import * as React from 'react';
+import {Position} from 'react-virtualized';
 import {AutoSizer} from 'react-virtualized/dist/commonjs/AutoSizer';
 import {List, ListRowRenderer} from 'react-virtualized/dist/commonjs/List';
 import {Message} from '../types';
@@ -55,11 +57,45 @@ export const ContentBody = (props: ContentBodyProps) => {
   return (
     <div className={styles.ContentBody}>
       <div className={styles.ContentBodyTableHeader}>
-        <th>From</th>
-        <th>To</th>
-        <th>Subject</th>
-        <th>Flags</th>
-        <th>Date</th>
+        <th>
+          <Tooltip content={'Sender of the message'} position={Position.BOTTOM}>
+            From
+          </Tooltip>
+        </th>
+        <th>
+          <Tooltip
+            content={'Receiver of the message'}
+            position={Position.BOTTOM}
+          >
+            To
+          </Tooltip>
+        </th>
+        <th>
+          <Tooltip
+            content={'The subject of the email'}
+            position={Position.BOTTOM}
+          >
+            Subject
+          </Tooltip>
+        </th>
+        <th>
+          <Tooltip
+            content={
+              'One or more heuristics that identified the message as sensitive'
+            }
+            position={Position.BOTTOM}
+          >
+            Flags
+          </Tooltip>
+        </th>
+        <th>
+          <Tooltip
+            content={'Date in which the email was received'}
+            position={Position.BOTTOM}
+          >
+            Date
+          </Tooltip>
+        </th>
       </div>
       <AutoSizer>
         {({height, width}) => (
