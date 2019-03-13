@@ -5,7 +5,6 @@ import * as path from 'path';
 import * as urlParse from 'url-parse';
 import {ENDPOINTS} from '../app/constants';
 import {INTERNAL_PORT} from './constants';
-import {GmailEmailService} from './email_services/gmail';
 import {EmailService} from './email_services/types';
 import {log} from './log';
 import {Report} from './report';
