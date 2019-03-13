@@ -31,9 +31,9 @@ and place the values there. Otherwise the value in your ENV will be used.
 
 ## Endpoints
 
-`/stats`: returns stats reguarding the current email processing.
-`/get_auth`: get the Gmail authentication link used for redirecting the user to the OAuth page.
-`/flagged_messages`: returns all the flagged messages.
+- `/stats`: returns stats reguarding the current email processing.
+- `/get_auth`: get the Gmail authentication link used for redirecting the user to the OAuth page.
+- `/flagged_messages`: returns all the flagged messages.
 
 ## How to run the application
 
