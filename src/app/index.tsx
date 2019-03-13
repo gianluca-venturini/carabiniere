@@ -31,7 +31,10 @@ class App extends React.Component<{}, AppState> {
           fetchingData={stats && stats.fetchingPages}
         />
         <Foooter stats={stats} />
-        <ContentBody messages={flaggedMessages} />
+        <ContentBody
+          messages={flaggedMessages}
+          fetchingPages={(stats && stats.fetchingPages) || false}
+        />
       </div>
     );
   }

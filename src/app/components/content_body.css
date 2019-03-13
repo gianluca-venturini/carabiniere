@@ -1,5 +1,9 @@
 @import './constants.css';
 
+:root {
+  --rowHeight: 30px;
+}
+
 .ContentBody {
   width: var(--bodyWidth);
   margin: auto;
@@ -13,12 +17,24 @@
 }
 
 .Row > * {
-  height: var(--topBarHeight);
+  height: var(--rowHeight);
   display: inline-block;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 6px;
+}
+
+.Row {
+  position: relative;
+}
+
+.rowSpinner {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* Hardcoded column sizes */

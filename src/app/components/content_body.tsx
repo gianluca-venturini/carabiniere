@@ -1,4 +1,4 @@
-import {Position, Tag, Tooltip} from '@blueprintjs/core';
+import {Position, Spinner, Tag, Tooltip} from '@blueprintjs/core';
 import * as crypto from 'crypto-js';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -11,6 +11,7 @@ import * as styles from './content_body.css';
 
 interface ContentBodyProps {
   messages: ReadonlyArray<Message>;
+  fetchingPages: boolean;
 }
 
 // TODO: fetch user email from backend in order to redirect correctly in all edge cases
@@ -51,6 +52,15 @@ export const ContentBody = (props: ContentBodyProps) => {
   // Function for rendering one row of the table
   const rowRenderer: ListRowRenderer = ({style, index}) => {
     const {messages} = props;
+    if (index >= messages.length) {
+      // Render a spinner on the last row
+      return (
+        <div className={styles.Row} key={'loader'} style={style}>
+          <Spinner size={14} className={styles.rowSpinner} />
+        </div>
+      );
+    }
+
     const message = messages[index];
     return (
       <div
@@ -140,7 +150,7 @@ export const ContentBody = (props: ContentBodyProps) => {
               width={width}
               // Keep this value in sync with css
               rowHeight={30}
-              rowCount={props.messages.length}
+              rowCount={props.messages.length + (props.fetchingPages ? 1 : 0)}
               rowRenderer={rowRenderer}
             />
           </div>

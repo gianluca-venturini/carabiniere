@@ -1,6 +1,7 @@
 export const ContentBody: string;
 export const ContentBodyTableHeader: string;
 export const Row: string;
+export const rowSpinner: string;
 export const ContentBodyTableBody: string;
 export const tagBlue: string;
 export const tagPink: string;
