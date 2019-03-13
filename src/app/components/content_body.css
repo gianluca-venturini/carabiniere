@@ -14,6 +14,19 @@
 
 .ContentBodyTableHeader {
   height: var(--tableHeaderHeight);
+  width: var(--bodyWidth);
+  position: relative;
+  display: block;
+}
+
+.ContentBodyTableHeader {
+  font-weight: bold;
+  border-bottom: solid 0.5px #ccc;
+}
+
+.HeaderRow {
+  height: 30px;
+  line-height: 30px;
 }
 
 .Row > * {

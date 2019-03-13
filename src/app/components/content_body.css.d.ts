@@ -1,5 +1,6 @@
 export const ContentBody: string;
 export const ContentBodyTableHeader: string;
+export const HeaderRow: string;
 export const Row: string;
 export const rowSpinner: string;
 export const ContentBodyTableBody: string;

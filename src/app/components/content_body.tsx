@@ -1,4 +1,5 @@
 import {Position, Spinner, Tag, Tooltip} from '@blueprintjs/core';
+import * as cx from 'classnames';
 import * as crypto from 'crypto-js';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -49,6 +50,14 @@ export const ContentBody = (props: ContentBodyProps) => {
     return tagColorClasses[classIndex];
   };
 
+  const renderHeader = (name: string, description: string) => (
+    <Tooltip content={description} position={Position.BOTTOM}>
+      <div className={styles.HeaderRow} key={name}>
+        {name}
+      </div>
+    </Tooltip>
+  );
+
   // Function for rendering one row of the table
   const rowRenderer: ListRowRenderer = ({style, index}) => {
     const {messages} = props;
@@ -69,10 +78,10 @@ export const ContentBody = (props: ContentBodyProps) => {
         onClick={makeHandleClick(message.emailId)}
         style={style}
       >
-        <div>{message.from}</div>
-        <div>{message.to}</div>
-        <div>{message.subject}</div>
-        <div>
+        <div key='from'>{message.from}</div>
+        <div key='to'>{message.to}</div>
+        <div key='subject'>{message.subject}</div>
+        <div key='flags'>
           {message.flags.map((flag) => {
             const flagLabel = (
               <Tag className={getTagClass(flag.flag)}>{flag.flag}</Tag>
@@ -94,65 +103,36 @@ export const ContentBody = (props: ContentBodyProps) => {
             );
           })}
         </div>
-        <div>{`${formatDate(message.date)}`}</div>
+        <div key='date'>{`${formatDate(message.date)}`}</div>
       </div>
     );
   };
 
   return (
     <div className={styles.ContentBody}>
-      <div className={styles.ContentBodyTableHeader}>
-        <th>
-          <Tooltip content={'Sender of the message'} position={Position.BOTTOM}>
-            From
-          </Tooltip>
-        </th>
-        <th>
-          <Tooltip
-            content={'Receiver of the message'}
-            position={Position.BOTTOM}
-          >
-            To
-          </Tooltip>
-        </th>
-        <th>
-          <Tooltip
-            content={'The subject of the email'}
-            position={Position.BOTTOM}
-          >
-            Subject
-          </Tooltip>
-        </th>
-        <th>
-          <Tooltip
-            content={
-              'One or more heuristics that identified the message as sensitive'
-            }
-            position={Position.BOTTOM}
-          >
-            Flags
-          </Tooltip>
-        </th>
-        <th>
-          <Tooltip
-            content={'Date in which the email was received'}
-            position={Position.BOTTOM}
-          >
-            Date
-          </Tooltip>
-        </th>
-      </div>
       <AutoSizer>
         {({height, width}) => (
-          <div className={styles.ContentBodyTableBody}>
-            <List
-              height={height}
-              width={width}
-              // Keep this value in sync with css
-              rowHeight={30}
-              rowCount={props.messages.length + (props.fetchingPages ? 1 : 0)}
-              rowRenderer={rowRenderer}
-            />
+          <div>
+            <div className={styles.ContentBodyTableHeader}>
+              {renderHeader('From', 'Sender of the message')}
+              {renderHeader('To', 'Receiver of the message')}
+              {renderHeader('Subject', 'The subject of the email')}
+              {renderHeader(
+                'Flags',
+                'One or more heuristics that identified the message as sensitive',
+              )}
+              {renderHeader('Date', 'Date in which the email was received')}
+            </div>
+            <div className={styles.ContentBodyTableBody}>
+              <List
+                height={height - 30}
+                width={width}
+                // Keep this value in sync with css
+                rowHeight={30}
+                rowCount={props.messages.length + (props.fetchingPages ? 1 : 0)}
+                rowRenderer={rowRenderer}
+              />
+            </div>
           </div>
         )}
       </AutoSizer>
