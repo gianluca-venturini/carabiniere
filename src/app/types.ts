@@ -25,4 +25,5 @@ export interface StatsResponse {
   discoveredEmails: number;
   flaggedEmails: number;
   fetchingPages: boolean;
+  totalMessages: number | undefined;
 }

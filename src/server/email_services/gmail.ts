@@ -123,6 +123,12 @@ export class GmailEmailService implements EmailService {
     });
   }
 
+  async getTotalMessages() {
+    const gmail = google.gmail({version: 'v1', auth: this.oauthClient});
+    const result = await gmail.users.getProfile({userId: 'me'});
+    return result.data.messagesTotal;
+  }
+
   /**
    * Resume listing from the last page contained in listEmailState.
    * Write the results in messageQueue.

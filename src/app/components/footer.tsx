@@ -66,6 +66,11 @@ export class Foooter extends React.Component<Props> {
     return (
       <div className={styles.Footer}>
         {this.renderStat(
+          'Estimated total emails',
+          'Estimated number of emails to be processed',
+          displayStats.totalMessages,
+        )}
+        {this.renderStat(
           'Discovered emails',
           'Email id found in inbox',
           displayStats.discoveredEmails,
@@ -99,7 +104,11 @@ export class Foooter extends React.Component<Props> {
     this.forceUpdate();
   }
 
-  private renderStat = (name: string, description: string, value: number) => (
+  private renderStat = (
+    name: string,
+    description: string,
+    value: number | undefined,
+  ) => (
     <Tooltip content={description} position={Position.TOP}>
       <Card
         interactive={true}
@@ -107,7 +116,7 @@ export class Foooter extends React.Component<Props> {
         className={styles.card}
       >
         <div>{name}</div>
-        <div>{value}</div>
+        <div>{value || 0}</div>
       </Card>
     </Tooltip>
   )

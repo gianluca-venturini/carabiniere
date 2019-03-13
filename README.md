@@ -41,6 +41,10 @@ and place the values there. Otherwise the value in your ENV will be used.
   `yarn install`
 - Build the frontend
   `npm run build`
+- Build the frontend watching for changes, useful while developing
+  `npm run watch`
+- Run the tests
+  `npm run test`
 - Start the application
   `npm start`
 - Visit `http://<hostname>:<port>` to access the interface.

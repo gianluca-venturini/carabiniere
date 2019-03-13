@@ -15,9 +15,10 @@ const emailParser = new EmailParser(report);
 async function fillReport() {
   report.startFetchingPages();
   /** List all the emails contained in the all the services */
-  const listAllEmailsPromises = emailServices.map((service) =>
-    service.listAllEmails(parseEmailQueue),
-  );
+  const listAllEmailsPromises = emailServices.map((service) => {
+    service.getTotalMessages().then(report.setTotalMessages);
+    return service.listAllEmails(parseEmailQueue);
+  });
   await Promise.all(listAllEmailsPromises);
   log('All email services inspected', MessageLevel.INFO);
 }
