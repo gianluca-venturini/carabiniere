@@ -1,6 +1,6 @@
 import {queue} from 'async';
 import * as _ from 'lodash';
-import {MessageLevel} from './constants';
+import {EMAIL_PARSER_WORKERS, MessageLevel} from './constants';
 import {EmailParser} from './email_parser';
 import {EmailServiceId, SERVICES} from './email_services/index';
 import {log} from './log';
@@ -8,14 +8,10 @@ import {Report} from './report';
 import {EmailMessage} from './types';
 import {WebServer} from './web_server';
 
-const EMAIL_PARSER_WORKERS = 20;
-
 const report = new Report();
 const emailParser = new EmailParser(report);
 
-/**
- * Fetch all emails and fill the report with flagged emails.
- */
+/** Fetch all emails and fill the report with flagged emails */
 async function fillReport() {
   report.startFetchingPages();
   /** List all the emails contained in the all the services */
@@ -43,6 +39,7 @@ const parseEmailQueue = queue<EmailMessage>(async (message, callback) => {
   callback();
 }, EMAIL_PARSER_WORKERS);
 
+/** Initialize the webserver connecting it to the report */
 const webServer = new WebServer();
 webServer.installEmailServicesCallbacks(emailServices, fillReport);
 webServer.installReportViewer(report);
