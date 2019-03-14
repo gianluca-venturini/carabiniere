@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as urlParse from 'url-parse';
 import {ENDPOINTS} from '../app/constants';
-import {INTERNAL_PORT} from './constants';
+import {EXTERNAL_PORT, HOSTNAME, INTERNAL_PORT, PROTOCOL} from './constants';
 import {EmailService} from './email_services/types';
 import {log} from './log';
 import {Report} from './report';
@@ -55,6 +55,10 @@ export class WebServer {
       res.write(JSON.stringify(report.getAllFlaggedEmails()));
       res.end();
     });
+  }
+
+  getPublicUrl() {
+    return `${PROTOCOL}://${HOSTNAME}:${EXTERNAL_PORT}`;
   }
 
   /**

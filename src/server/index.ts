@@ -1,4 +1,5 @@
 import {queue} from 'async';
+import {exec} from 'child_process';
 import * as _ from 'lodash';
 import {EMAIL_PARSER_WORKERS, MessageLevel} from './constants';
 import {EmailParser} from './email_parser';
@@ -45,3 +46,4 @@ const webServer = new WebServer();
 webServer.installEmailServicesCallbacks(emailServices, fillReport);
 webServer.installReportViewer(report);
 webServer.listen();
+exec(`open ${webServer.getPublicUrl()}`);
