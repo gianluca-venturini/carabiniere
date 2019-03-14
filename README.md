@@ -39,6 +39,7 @@ and place the values there. Otherwise the value in your ENV will be used.
 
 - Install npm packages
   `yarn install`
+- Set mandatory env variables
 - Build the frontend
   `npm run build`
 - Build the frontend watching for changes, useful while developing
